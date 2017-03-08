@@ -19,10 +19,26 @@ namespace AnimatedSprites
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
+        Texture2D textureRunLeft;
+        Texture2D textureRunRight;
+        Texture2D textureIdle;
+        Texture2D textureJump;
+        Texture2D textureDraw;
+
+        Point frameSize = new Point(51, 51);
+        Point currentFrame = new Point(0, 0);
+        Point sheetSize = new Point(8, 1);
+
+        int timeSinceLastFrame = 0;
+        int millisecondsPerFame = 50;
+
+        Keys previousKey = Keys.None;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            //TargetElapsedTime = new TimeSpan(0, 0, 0, 0, 80); // change the whole game framerate NOT IDEAL!!!
         }
 
         /// <summary>
@@ -48,6 +64,9 @@ namespace AnimatedSprites
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
+            textureRunLeft = Content.Load<Texture2D>(@"Images\run_left");
+            textureRunRight = Content.Load<Texture2D>(@"Images\run_right");
+            textureIdle = Content.Load<Texture2D>(@"Images\Jump");
         }
 
         /// <summary>
@@ -66,12 +85,95 @@ namespace AnimatedSprites
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            KeyboardState keyboardState = Keyboard.GetState();
             // Allows the game to exit
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
+            bool changeFrame = false;
+            
             // TODO: Add your update logic here
+            if (keyboardState.IsKeyDown(Keys.Left))
+            {
+                textureDraw = textureRunLeft;
+                changeFrame = true;
+                previousKey = Keys.Left;
+            }
+            else if (keyboardState.IsKeyDown(Keys.Right))
+            {
+                textureDraw = textureRunRight;
+                changeFrame = true;
+                previousKey = Keys.Right;
+            }
+            else if (keyboardState.IsKeyDown(Keys.Down))
+            {
+                textureDraw = textureIdle;
+                changeFrame = false;
 
+                if (currentFrame == new Point(0,0)  || currentFrame == new Point(4, 0) || currentFrame == new Point(6, 0))
+
+                //if (previousKey == Keys.Left || currentFrame == new Point(0,0))
+                {
+                    currentFrame = new Point(2, 0);
+                }
+                //else if (previousKey == Keys.Right)
+                else if (currentFrame == new Point(1, 0)  || currentFrame == new Point(5, 0) || currentFrame == new Point(7, 0))
+
+                {
+                    currentFrame = new Point(3, 0);
+                }
+            }
+            else if (keyboardState.IsKeyDown(Keys.Up))
+            {
+                textureDraw = textureIdle;
+                changeFrame = false;
+                if (previousKey == Keys.Left)
+                {
+                    currentFrame = new Point(5, 0);
+                }
+                else if (previousKey == Keys.Right)
+                {
+                    currentFrame = new Point(4, 0);
+                }
+            }
+            else
+            {
+                textureDraw = textureIdle;
+                changeFrame = false;
+                if (previousKey == Keys.Left)
+                {
+                    currentFrame = new Point(1, 0);
+                }
+                else if( previousKey == Keys.Right)
+                {
+                    currentFrame = new Point(0, 0);
+                }
+            }
+
+
+            if (changeFrame)
+            {
+                timeSinceLastFrame += gameTime.ElapsedGameTime.Milliseconds;
+                if (timeSinceLastFrame > millisecondsPerFame)
+                {
+                    timeSinceLastFrame -= millisecondsPerFame;
+
+
+                    ++currentFrame.X;
+                    if (currentFrame.X >= sheetSize.X)
+                    {
+                        currentFrame.X = 0;
+                        ++currentFrame.Y;
+                        if (currentFrame.Y >= sheetSize.Y)
+                        {
+                            currentFrame.Y = 0;
+                        }
+                    }
+
+
+                    // timeSinceLastFrame = 0;
+                }
+            }
             base.Update(gameTime);
         }
 
@@ -84,6 +186,11 @@ namespace AnimatedSprites
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
+            spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
+
+            spriteBatch.Draw(textureDraw, new Vector2(GraphicsDevice.Viewport.Width/2 - frameSize.X/2, GraphicsDevice.Viewport.Height/2 - frameSize.Y/2), new Rectangle(currentFrame.X * frameSize.X, currentFrame.Y * frameSize.Y, frameSize.X, frameSize.Y), Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
