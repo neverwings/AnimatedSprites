@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+
+
 using System.Diagnostics;
 using Microsoft.Xna.Framework.Input;
 
@@ -16,13 +18,14 @@ namespace AnimatedSprites
 
 
         public Vector2 playerPosition;
-        float playerSpeed;
-        Textures playerTextures;
-        Point playercurrentFrame;
-        Texture2D currentTexture;
+        private float playerSpeed;
+        private Textures playerTextures;
+        private Point playerframeSize;
+        private Point playercurrentFrame;
+        private Texture2D currentTexture;
 
-        Input input = new Input();
-        Point sheetSize = new Point(8, 1); // number of columns and rows in the image. for now each files has only 8 columns and 1 rows of animation. 
+        private Input input = new Input();
+        private Point sheetSize = new Point(8, 1); // number of columns and rows in the image. for now each files has only 8 columns and 1 rows of animation. 
 
 
         int timeSinceLastFrame = 0;
@@ -34,31 +37,57 @@ namespace AnimatedSprites
             playerPosition = Vector2.Zero;
             playerSpeed = 2;
             playercurrentFrame = new Point(0, 0);
-            
-        }
+            playerframeSize = new Point(51, 51);
 
+        }
+        /// <summary>
+        /// load textures for the player and anything related to player
+        /// </summary>
+        /// <param name="content"></param>
         public void loadPlayer(ContentManager content)
         {
             playerTextures.loadTextures(content);
         }
 
-
-        public void updatePlayer(ContentManager content, GameTime gameTime, KeyboardState keyboard)
+        /// <summary>
+        /// update Player movement
+        /// </summary>
+        /// <param name="content"></param>
+        /// <param name="gameTime"></param>
+        /// <param name="keyboard"></param>
+        public void updatePlayer(ContentManager content, GameTime gameTime, KeyboardState keyboard, GameWindow window)
         {
             updateFrame(content, gameTime);
             inputUpdate(keyboard);
-            
+            playerScreenCollision(window);
+
+
         }
 
+        /// <summary>
+        /// Draw player and anything touch  or used by the player
+        /// </summary>
+        /// <param name="spriteBatch"></param>
+        /// <param name="graphicsDevice"></param>
         public void drawPlayer(SpriteBatch spriteBatch, GraphicsDevice graphicsDevice)
         {
             spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
 
-            spriteBatch.Draw(currentTexture, new Vector2(graphicsDevice.Viewport.Width / 2 - playerTextures.getplayerFrameSize.X / 2 + playerPosition.X, graphicsDevice.Viewport.Height / 2 - playerTextures.getplayerFrameSize.Y / 2 + playerPosition.Y), new Rectangle(playercurrentFrame.X * playerTextures.getplayerFrameSize.X, playercurrentFrame.Y * playerTextures.getplayerFrameSize.Y, playerTextures.getplayerFrameSize.X, playerTextures.getplayerFrameSize.Y), Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+            //spriteBatch.Draw(currentTexture, new Vector2(graphicsDevice.Viewport.Width / 2 - playerframeSize.X / 2 + playerPosition.X, graphicsDevice.Viewport.Height / 2 - playerframeSize.Y / 2 + playerPosition.Y), new Rectangle(playercurrentFrame.X * playerframeSize.X, playercurrentFrame.Y * playerframeSize.Y, playerframeSize.X, playerframeSize.Y), Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+            spriteBatch.Draw(currentTexture, new Vector2(playerPosition.X, playerPosition.Y), new Rectangle(playercurrentFrame.X * playerframeSize.X, playercurrentFrame.Y * playerframeSize.Y, playerframeSize.X, playerframeSize.Y), Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+
+            Texture2D testrectangle = new Texture2D(graphicsDevice, 1, 1);
+            testrectangle.SetData(new Color[] { Color.White });
+            // test collision
+            spriteBatch.Draw(testrectangle, new Vector2(playerPosition.X, playerPosition.Y), new Rectangle((int) playerPosition.X ,(int) playerPosition.Y , playerframeSize.X, playerframeSize.Y), Color.Red);
 
             spriteBatch.End();
         }
 
+        /// <summary>
+        /// Update the input to the player
+        /// </summary>
+        /// <param name="keyboard"></param>
         private void inputUpdate(KeyboardState keyboard)
         { 
            
@@ -67,6 +96,11 @@ namespace AnimatedSprites
             input.updatekeyboardState(keyboard);
         }
         
+        /// <summary>
+        /// Update the correct frame for each action of the player. 
+        /// </summary>
+        /// <param name="content"></param>
+        /// <param name="gameTime"></param>
         private void updateFrame(ContentManager content, GameTime gameTime)
         {
             /*change frame is only used for Animation.*/
@@ -125,8 +159,7 @@ namespace AnimatedSprites
                 }
 
                 
-            }
-            Debug.WriteLine(input.getkeyboardState.Y);
+            }          
             /*player jumps*/
             if (input.getkeyboardState.Y == -2)
             {
@@ -174,12 +207,12 @@ namespace AnimatedSprites
                 if (input.getkeyboardState.X <= -1)
                 {
                     input.getkeyboardState = new Vector2(-1, 1);
-                    playercurrentFrame = new Point(5, 0); //frame: sixth column, first row
+                    playercurrentFrame = new Point(7, 0); //frame: eight column, first row
                 }
                 else if (input.getkeyboardState.X >= 1)
                 {
                     input.getkeyboardState = new Vector2(1, 1);
-                    playercurrentFrame = new Point(4, 0); //frame: fifth column, first row
+                    playercurrentFrame = new Point(6, 0); //frame: seventh column, first row
                 }
                 else
                 {
@@ -187,12 +220,12 @@ namespace AnimatedSprites
                     if (input.getpreviousKey == Keys.A)
                     {
                         input.getkeyboardState = new Vector2(0, 1);
-                        playercurrentFrame = new Point(5, 0); //frame: sixth column, first row
+                        playercurrentFrame = new Point(7, 0); //frame: eight column, first row
                     }
                     else if (input.getpreviousKey == Keys.D)
                     {
                         input.getkeyboardState = new Vector2(0, 1);
-                        playercurrentFrame = new Point(4, 0); //frame: fifth column, first row
+                        playercurrentFrame = new Point(6, 0); //frame: seventh column, first row
                     }
                 }
                 
@@ -200,6 +233,17 @@ namespace AnimatedSprites
 
 
             //changeframe make sure that when if there is a repeated animation, we can control the speed of the animation. 
+            playerAnimationMovement(changeanimationFrame, gameTime);
+           
+        }
+
+        /// <summary>
+        /// Player animation movement (multiple frames for one movement such as walking)
+        /// </summary>
+        /// <param name="changeanimationFrame"></param>
+        /// <param name="gameTime"></param>
+        private void playerAnimationMovement(bool changeanimationFrame, GameTime gameTime)
+        {
             if (changeanimationFrame)
             {
                 timeSinceLastFrame += gameTime.ElapsedGameTime.Milliseconds;
@@ -218,14 +262,33 @@ namespace AnimatedSprites
                             playercurrentFrame.Y = 0;
                         }
                     }
-                    
+
                 }
             }
         }
 
-
-
-
+        
+        private void playerScreenCollision(GameWindow window)
+        {
+            
+            
+            if (playerPosition.X < 0)
+            {
+                playerPosition.X = 0;
+            }
+            if (playerPosition.Y <0)
+            {
+                playerPosition.Y = 0;
+            }
+            if (playerPosition.X > window.ClientBounds.Width - playerframeSize.X)
+            {
+                playerPosition.X = window.ClientBounds.Width - playerframeSize.X;
+            }
+            if (playerPosition.Y > window.ClientBounds.Height - playerframeSize.Y)
+            {
+                playerPosition.Y = window.ClientBounds.Height - playerframeSize.Y;
+            }
+        }
 
     }
 }

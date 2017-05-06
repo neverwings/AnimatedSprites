@@ -76,11 +76,11 @@ namespace AnimatedSprites
             // Allows the game to exit
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
-
+            
             // TODO: Add your update logic here
-           // Debug.WriteLine("how long does it takes");
+           
             KeyboardState keyboard = Keyboard.GetState();
-            world.updateWorld(Content, gameTime, keyboard);
+            world.updateWorld(Content, gameTime, keyboard, Window);
             base.Update(gameTime);
         }
 

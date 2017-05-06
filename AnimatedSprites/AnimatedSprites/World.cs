@@ -24,18 +24,33 @@ namespace AnimatedSprites
         public void loadWord(ContentManager content)
         {
             player.loadPlayer(content);
+           
         }
 
         //update world
-        public void updateWorld(ContentManager content, GameTime gameTime, KeyboardState keyboard)
+        public void updateWorld(ContentManager content, GameTime gameTime, KeyboardState keyboard, GameWindow window)
         {
-            player.updatePlayer(content, gameTime, keyboard);
+            player.updatePlayer(content, gameTime, keyboard, window);
         }
 
         //Draw world
         public void drawWord(SpriteBatch spriteBatch, GraphicsDevice graphicsDevice)
         {
-          player.drawPlayer(spriteBatch, graphicsDevice);
+           
+
+            // create a random rectangle to make sure that player have collision detection 
+
+            Texture2D testrectangle = new Texture2D(graphicsDevice, 1, 1);
+            testrectangle.SetData(new Color[] { Color.White });
+
+            spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
+
+            spriteBatch.Draw(testrectangle, new Rectangle(10, 10, graphicsDevice.Viewport.Width - 20, graphicsDevice.Viewport.Height - 20), Color.Green);
+
+            spriteBatch.End();
+
+            // make sure that player is drawn after to have the player on top
+            player.drawPlayer(spriteBatch, graphicsDevice);
         }
 
 

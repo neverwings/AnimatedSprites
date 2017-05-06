@@ -12,19 +12,11 @@ namespace AnimatedSprites
     class Textures
     {
         private List<Texture2D> playerTexture;
-        private Point playerframeSize;
+       
         public Textures()
         {
             playerTexture = new List<Texture2D>();
-            playerframeSize = new Point(51, 51);
-            
-        }
-        public Point getplayerFrameSize
-        {
-            get
-            {
-                return playerframeSize;
-            }
+           
         }
         public List<Texture2D> getTextures
         {
