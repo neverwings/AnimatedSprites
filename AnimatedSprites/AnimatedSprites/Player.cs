@@ -74,12 +74,14 @@ namespace AnimatedSprites
             spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
 
             //spriteBatch.Draw(currentTexture, new Vector2(graphicsDevice.Viewport.Width / 2 - playerframeSize.X / 2 + playerPosition.X, graphicsDevice.Viewport.Height / 2 - playerframeSize.Y / 2 + playerPosition.Y), new Rectangle(playercurrentFrame.X * playerframeSize.X, playercurrentFrame.Y * playerframeSize.Y, playerframeSize.X, playerframeSize.Y), Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
-            spriteBatch.Draw(currentTexture, new Vector2(playerPosition.X, playerPosition.Y), new Rectangle(playercurrentFrame.X * playerframeSize.X, playercurrentFrame.Y * playerframeSize.Y, playerframeSize.X, playerframeSize.Y), Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+            spriteBatch.Draw(currentTexture, new Vector2(playerPosition.X , playerPosition.Y), new Rectangle((playercurrentFrame.X * playerframeSize.X), (playercurrentFrame.Y * playerframeSize.Y), playerframeSize.X, playerframeSize.Y), Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
 
             Texture2D testrectangle = new Texture2D(graphicsDevice, 1, 1);
             testrectangle.SetData(new Color[] { Color.White });
             // test collision
-            spriteBatch.Draw(testrectangle, new Vector2(playerPosition.X, playerPosition.Y), new Rectangle((int) playerPosition.X ,(int) playerPosition.Y , playerframeSize.X, playerframeSize.Y), Color.Red);
+           
+            spriteBatch.Draw(testrectangle, new Vector2(playerPosition.X, playerPosition.Y+5), new Rectangle((int)playerPosition.X, (int)playerPosition.Y, playerframeSize.X - 20, playerframeSize.Y-5), Color.Yellow);
+
 
             spriteBatch.End();
         }
@@ -267,7 +269,7 @@ namespace AnimatedSprites
             }
         }
 
-        
+        //Calculate player colision with the window frame!
         private void playerScreenCollision(GameWindow window)
         {
             
