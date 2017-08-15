@@ -20,7 +20,7 @@ namespace AnimatedSprites
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        World world;
+        GameWorld world;
 
         Point frameSize = new Point(51, 51);
         Point currentFrame = new Point(0, 0);
@@ -41,7 +41,7 @@ namespace AnimatedSprites
         {
             // TODO: Add your initialization logic here
         
-            world = new World();
+            world = new GameWorld();
             base.Initialize();
         }
 

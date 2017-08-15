@@ -6,30 +6,43 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using FarseerPhysics.Dynamics;
+using FarseerPhysics.Factories;
+using FarseerPhysics.Dynamics.Contacts;
+using FarseerPhysics.Collision.Shapes;
 
 namespace AnimatedSprites
 {
-    class World
+    class GameWorld 
     {
         //load world
 
-        Player player;
+        private Player player;
+        
+        private World physicsWorld;
+       
+        
 
-        public World()
+        public GameWorld()
         {
             player = new Player();
+            physicsWorld = new World(new Vector2(0f,9.82f));
+            
         }
 
         //Initialize world
         public void loadWord(ContentManager content)
         {
-            player.loadPlayer(content);
            
+            player.loadPlayer(content);
+
+          
         }
 
         //update world
         public void updateWorld(ContentManager content, GameTime gameTime, KeyboardState keyboard, GameWindow window)
         {
+            //physicsWorld.Step(0.03333f);
             player.updatePlayer(content, gameTime, keyboard, window);
         }
 
@@ -53,6 +66,15 @@ namespace AnimatedSprites
             player.drawPlayer(spriteBatch, graphicsDevice);
         }
 
+        public bool MyOnCollision(Fixture f1, Fixture f2, Contact contact)
+
+        {
+
+         //We want the collision to happen, so we return true.
+
+         return true;
+
+        } 
 
         
         
